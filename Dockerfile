@@ -2,10 +2,12 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install dependencies
+# Copy project files
 COPY pyproject.toml .
+COPY README.md .
 COPY src/ src/
 
+# Install dependencies
 RUN pip install --no-cache-dir .
 
 # Copy cloud server entry point
