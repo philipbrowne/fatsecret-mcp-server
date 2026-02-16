@@ -1,5 +1,6 @@
 """FatSecret MCP Server implementation using FastMCP."""
 
+import os
 from contextlib import asynccontextmanager
 from datetime import date
 from typing import Any
@@ -47,8 +48,6 @@ async def lifespan(app: Any):
 
     # Initialize token store - use env vars on cloud deployments
     # Railway sets RAILWAY_ENVIRONMENT, Render sets RENDER
-    import os
-
     is_cloud = os.environ.get("RAILWAY_ENVIRONMENT") or os.environ.get("RENDER")
     if is_cloud:
         _token_store = EnvTokenStore()
@@ -78,7 +77,11 @@ async def lifespan(app: Any):
 
 
 # Create FastMCP server with lifespan
-mcp = FastMCP("fatsecret", lifespan=lifespan)
+# Configure for cloud deployment if PORT env var is set
+_mcp_host = os.environ.get("FASTMCP_HOST", "127.0.0.1")
+_mcp_port = int(os.environ.get("PORT", os.environ.get("FASTMCP_PORT", "8000")))
+
+mcp = FastMCP("fatsecret", lifespan=lifespan, host=_mcp_host, port=_mcp_port)
 
 
 def _get_client() -> FatSecretClient:
@@ -98,8 +101,6 @@ def _get_token_store() -> TokenStore:
 def _get_oauth_flow() -> OAuthFlowManager:
     """Get the OAuthFlowManager from module state."""
     if _oauth_flow is None:
-        import os
-
         is_cloud = os.environ.get("RAILWAY_ENVIRONMENT") or os.environ.get("RENDER")
         if is_cloud:
             raise RuntimeError(
