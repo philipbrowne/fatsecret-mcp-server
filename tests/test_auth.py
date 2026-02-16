@@ -170,9 +170,10 @@ def test_signature_verification_known_values():
     This test uses fixed OAuth parameters to verify the signature
     calculation is correct.
     """
+    # Using obviously fake test credentials (not real secrets)
     settings = Settings(
-        consumer_key="dpUt3F7ztk6D9Acjs9P8f",
-        consumer_secret="qABCd1234efGHIJklmnOPqrs56",
+        consumer_key="fake_test_consumer_key_12345",
+        consumer_secret="fake_test_consumer_secret_67890",
     )
     signer = OAuth1Signer(settings)
 
@@ -182,7 +183,7 @@ def test_signature_verification_known_values():
         "method": "foods.search",
         "format": "json",
         "search_expression": "banana",
-        "oauth_consumer_key": "dpUt3F7ztk6D9Acjs9P8f",
+        "oauth_consumer_key": "fake_test_consumer_key_12345",
         "oauth_nonce": "abc123",
         "oauth_signature_method": "HMAC-SHA1",
         "oauth_timestamp": "1234567890",
