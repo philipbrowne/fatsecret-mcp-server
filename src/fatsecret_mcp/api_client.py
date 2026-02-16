@@ -1,5 +1,6 @@
 """FatSecret API client implementation."""
 
+import os
 from typing import Any
 
 import httpx
@@ -441,11 +442,18 @@ class FatSecretClient:
         self._require_user_auth()
 
         # Default to today if no date specified
+        # Use TZ env var for timezone (e.g., "America/Los_Angeles")
         if date is None:
-            from datetime import datetime
+            from datetime import datetime, timezone
+            from zoneinfo import ZoneInfo
 
-            epoch = datetime(1970, 1, 1)
-            today = datetime.now()
+            tz_name = os.environ.get("TZ", "UTC")
+            try:
+                tz = ZoneInfo(tz_name)
+            except Exception:
+                tz = timezone.utc
+            today = datetime.now(tz).date()
+            epoch = datetime(1970, 1, 1).date()
             date = (today - epoch).days
 
         params: dict[str, Any] = {"date": date}
@@ -569,11 +577,18 @@ class FatSecretClient:
         self._require_user_auth()
 
         # Default to today if no date specified
+        # Use TZ env var for timezone (e.g., "America/Los_Angeles")
         if date is None:
-            from datetime import datetime
+            from datetime import datetime, timezone
+            from zoneinfo import ZoneInfo
 
-            epoch = datetime(1970, 1, 1)
-            today = datetime.now()
+            tz_name = os.environ.get("TZ", "UTC")
+            try:
+                tz = ZoneInfo(tz_name)
+            except Exception:
+                tz = timezone.utc
+            today = datetime.now(tz).date()
+            epoch = datetime(1970, 1, 1).date()
             date = (today - epoch).days
 
         params: dict[str, Any] = {"date": date}
